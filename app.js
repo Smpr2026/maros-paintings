@@ -377,7 +377,7 @@
   // pointer painting
   let down = false, last = null, brush = null, moved = 0;
   const pt = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-  cv.addEventListener('pointerdown', e => { down = true; brush = newBrush(); last = pt(e); moved = 0; stamp(last.x, last.y, 0, brush, 0.6); cv.setPointerCapture(e.pointerId); stopAuto(); });
+  cv.addEventListener('pointerdown', e => { down = true; brush = newBrush(); last = pt(e); moved = 0; stamp(last.x, last.y, 0, brush, 0.6); cv.setPointerCapture(e.pointerId); stopAuto(); clearTimeout(autoFin); });
   cv.addEventListener('pointermove', e => {
     if (!down) return;
     const p = pt(e); moved += Math.hypot(p.x - last.x, p.y - last.y);
@@ -414,21 +414,22 @@
       prev = p;
       if (u >= 1) { if (Math.random() < .8) addRun(p.x, p.y); addRun(W * (0.4 + Math.random() * .5), p.y); si++; t = 0; prev = null; br = newBrush(); }
       if (si < strokes.length) autoRaf = requestAnimationFrame(tick);
-      else { autoRaf = 0; checkCoverage(); }
+      else { autoRaf = 0; checkCoverage(); autoFin = setTimeout(finish, 900); }
     };
     autoRaf = requestAnimationFrame(tick);
   }
   function stopAuto() { if (autoRaf) { cancelAnimationFrame(autoRaf); autoRaf = 0; } }
 
+  let autoFin = 0;
   function finish() {
     stopAuto();
     cv.style.transition = 'opacity 1.2s cubic-bezier(.16,1,.3,1)';
     cv.style.opacity = 0;
-    hero.classList.add('painted', 'signed'); signed = true;
+    hero.classList.add('painted', 'signed', 'done'); signed = true;
   }
   function reset() {
     stopAuto(); runs.length = 0;
-    hero.classList.remove('painted', 'signed'); signed = false;
+    hero.classList.remove('painted', 'signed', 'done'); signed = false; clearTimeout(autoFin);
     drawCover();
   }
   $$('[data-hero]').forEach(b => b.addEventListener('click', () => (b.dataset.hero === 'finish' ? finish() : reset())));

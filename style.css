@@ -362,3 +362,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opa
 @media (max-width:720px) and (max-height:700px){
   .chapter .chapter-art{top:calc(125px + (100dvh - 125px - 250px) / 2)}
 }
+
+/* hero tools: "Finish it" while painting by hand, "Paint it yourself" once the car is done */
+.hero.done [data-hero="finish"]{display:none}
+.hero:not(.done) [data-hero="reset"]{display:none}
