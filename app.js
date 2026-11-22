@@ -116,7 +116,7 @@
           let y = j.bottom + 4;
           if (!j.under) { while (y > j.top && !inked(x, y)) y--; if (y <= j.top + 4) continue; }
           else y = j.bottom - (j.bottom - j.top) * .2;
-          drops.push({ x, y, len: 0, max: 14 + Math.random() * (j.under ? 26 : 46), w: (j.bottom - j.top) * (j.under ? .05 : .045) + 1.2, v: .5 + Math.random() * .7,
+          drops.push({ x, y, len: 0, max: Math.min(14 + Math.random() * (j.under ? 26 : 46), (j.bottom - j.top) * (.3 + Math.random() * .5)), w: (j.bottom - j.top) * (j.under ? .05 : .045) + 1.2, v: .5 + Math.random() * .7,
             c: j.under ? j.color : color });
           break;
         }
@@ -283,7 +283,7 @@
   let W = 0, H = 0, DPR = 1, lastW = 0, signed = false;
 
   function drawCover() {
-    const r = hero.getBoundingClientRect();
+    const r = cv.getBoundingClientRect(); // on phones the canvas only covers the painting, not the whole hero
     DPR = Math.min(devicePixelRatio || 1, 2);
     W = r.width; H = r.height; lastW = W;
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
@@ -578,7 +578,7 @@
     for (const k in errs) { $('#e-' + k).textContent = errs[k]; f[k].setAttribute('aria-invalid', !!errs[k]); if (errs[k] && !first) first = f[k]; }
     if (first) { first.focus(); return; }
     const size = sizeSel.value === 'other' ? 'Another size' : `${SIZES[sizeSel.value].label}, ${SIZES[sizeSel.value].w} x ${SIZES[sizeSel.value].h} mm`;
-    const text = `Hi Greg, I'd like to commission a painting.\n\nName: ${f.name.value.trim()}\nContact: ${f.contact.value.trim()}\nPainting: ${f.what.value.trim()}\nSize: ${size}\n\nI'll attach my photo.`;
+    const text = `Hi Greg, I'd like to order a painting.\n\nName: ${f.name.value.trim()}\nContact: ${f.contact.value.trim()}\nPainting: ${f.what.value.trim()}\nSize: ${size}\n\nI'll attach my photo.`;
     msg.textContent = text;
     const ok = await copy(text);
     sent.querySelector('p').innerHTML = ok
